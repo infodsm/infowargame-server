@@ -1,0 +1,30 @@
+{
+  "name": "infowargame-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/infodsm/infowargame-server.git",
+  "author": "titanv <a01098930999@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "babel-node src/index.js",
+    "start:dev": "nodemon --exec babel-node src/ src/index.js --delay 2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.0",
+    "dotenv": "^8.2.0",
+    "https": "^1.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.12.0",
+    "koa-body": "^4.1.1",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^8.0.8",
+    "sequelize": "^6.3.4"
+  }
+}
