@@ -19,33 +19,50 @@ exports.login = (async (ctx,next) => {
   const password = ctx.request.body.password;
 });
 
-//회원가입 api
+//회원가입 api 0
 exports.signup = (async (ctx,next) => {
   const id = ctx.request.body.id;
   const password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex');
   const nickname = ctx.request.body.nickname;
   const email = ctx.request.body.email;
   const team = ctx.request.body.team;
-  const check = false;
+  let check = false;
   let sql;
   let rows;
 
   const signup = async() => {
     sql = `SELECT id FROM user WHERE id = '${id}';`;
     rows = await connection.query(sql);
-    console.log(rows[0]);
 
-    sql = `INSERT INTO user(name,id,password,team,email,score) values('${nickname}','${id}','${password}','${team}','${email}',0);`;
-    rows = await connection.query(sql);
-  }
+    if(rows[0] == undefined){
+      sql = `INSERT INTO user(name,id,password,team,email,score) values('${nickname}','${id}','${password}','${team}','${email}',0);`;
+      rows = await connection.query(sql);
+      check = true;
+    }
+  };
 
   await signup();
   ctx.status = 201;
   ctx.body = {check : check};
 });
 
-// api
+//아이디 중복체크 api
 exports.idcheck = (async (ctx,next) => {
+  const id = ctx.query.userid;
+  let check = false;
+  let sql;
+  let rows;
+
+  const idcheck = async() => {
+    sql = `SELECT id FROM user WHERE id = '${id}';`;
+    rows = await connection.query(sql);
+    
+    if(rows[0] == undefined){ check = true; }
+  };
+
+  await idcheck();
+  ctx.status = 200;
+  ctx.body = {check : check};
 });
 
 // api
