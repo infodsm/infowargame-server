@@ -20,6 +20,7 @@ app.use(router.routes()).use(router.allowedMethods());
 
 router.use('/api', api.routes()); // api 라우트를 /api 경로 하위 라우트로 설정
 
+
 let serverCallback = app.callback();
 let httpServer = http.createServer(serverCallback);
 

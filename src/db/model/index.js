@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 import admin from './admin';//어드민의 정보가 있는 테이블
 import email_check from './email_check';//이메일 체크용 테이블
 import flags from './flags';//문제들의 플래그가 있는 테이블
