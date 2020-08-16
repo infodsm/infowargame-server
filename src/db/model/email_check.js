@@ -14,13 +14,19 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     email: {//이메일 주소
-      type: Sequelize.STRING(30),
+      type: Sequelize.STRING(50),
       allowNull: false
     },
 
     code: {//인증용 코드
       type: Sequelize.INTEGER,
       allowNull: false
+    },
+
+    email_check: {//인증용 코드
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
 
   }, 
