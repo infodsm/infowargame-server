@@ -10,7 +10,7 @@ auth.get('/idcheck', authCtrl.idcheck);
 auth.post('/emailsend', authCtrl.emailsend);
 auth.get('/emailcheck', authCtrl.emailcheck);
 auth.get('/mypage', authCtrl.mypage);
-auth.post('/change', authCtrl.change);
-auth.get('/findpassword', authCtrl.findpassword);
+auth.post('/changemyinfo', authCtrl.changemyinfo);
+auth.post('/findpassword', authCtrl.findpassword);
 
 module.exports = auth;
