@@ -14,7 +14,7 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     flag: {//플래그
-      type: Sequelize.TEXT,
+      type: 'VARBINARY(50)',
       allowNull: false
     }
 

@@ -9,12 +9,12 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     name: {//로그 제목
-      type: Sequelize.STRING(30),
+      type: 'VARBINARY(30)',
       allowNull: false
     },
 
     id: {//당사자 아이디
-      type: Sequelize.STRING(30),
+      type: 'VARBINARY(30)',
       allowNull: false
     },
 

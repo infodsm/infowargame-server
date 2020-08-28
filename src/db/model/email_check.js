@@ -9,7 +9,7 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     id: {//인증할 아이디
-      type: Sequelize.STRING(30),
+      type: 'VARBINARY(30)',
       allowNull: false
     },
 

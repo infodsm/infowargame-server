@@ -9,17 +9,17 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     id: {//아이디
-      type: Sequelize.STRING(30),
+      type: 'VARBINARY(30)',
       allowNull: false
     },
 
     password: {//비밀번호
-      type: Sequelize.STRING(30),
+      type: Sequelize.TEXT,
       allowNull: false
     },
 
     name: {//이름(닉네임)
-      type: Sequelize.STRING(30),
+      type: 'VARBINARY(30)',
       allowNull: false
     },
 
