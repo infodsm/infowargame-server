@@ -9,7 +9,7 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     name: {//로그 제목
-      type: 'VARBINARY(30)',
+      type: Sequelize.TEXT,
       allowNull: false
     },
 
@@ -18,7 +18,7 @@ module.exports = (Sequelize, sequelize) => {
       allowNull: false
     },
 
-    content: {//로그 주 내용
+    contents: {//로그 주 내용
       type: Sequelize.TEXT,
       allowNull: false
     },

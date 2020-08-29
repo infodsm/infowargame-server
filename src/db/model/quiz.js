@@ -30,7 +30,7 @@ module.exports = (Sequelize, sequelize) => {
 
     file: {//문제 파일
       type: Sequelize.TEXT,
-      allowNull: false
+      allowNull: true
     },
 
     point: {//문제 점수
