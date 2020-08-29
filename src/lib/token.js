@@ -10,7 +10,7 @@ exports.jwtsign = (async (id) => {
 exports.jwtverify = (async (token) => {
   let check;
   jwt.verify(token, process.env.secretjwt, (error, decoded) => {
-    if(error){ check = false; }
+    if(error){ check = ''; }
     else{
       check = decoded['id'];
     }
