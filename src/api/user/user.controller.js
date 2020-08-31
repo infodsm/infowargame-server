@@ -33,5 +33,5 @@ exports.search = (async (ctx,next) => {
 
   await search();
   ctx.status = 200;
-  ctx.body = {check, rows};
+  ctx.body = {check, contents : rows};
 });
