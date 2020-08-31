@@ -15,6 +15,10 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 //로그인 api 0
 exports.login = (async (ctx,next) => {
   const id = ctx.request.body.id;
+  console.log(ctx.request.body.password);
+  console.log(typeof ctx.request.body.password);
+  console.log(process.env.secret);
+  console.log(typeof process.env.secret);
   const password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex');
   let token = ctx.request.header.token;
   let check = false;
@@ -54,6 +58,9 @@ exports.signup = (async (ctx,next) => {
     sql = `SELECT id FROM email_check WHERE id = '${id}' AND email = '${email}' AND email_check = true;`;
     rows2 = await connection.query(sql);
 
+    console.log(rows[0]);
+    console.log(rows1[0]);
+    console.log(rows2[0]);
     if(rows[0] == undefined && rows1[0] == undefined && rows2[0] != undefined){
       sql = `INSERT INTO user(name,id,password,team,email,score) values('${nickname}','${id}','${password}','${team}','${email}',0);`;
       await connection.query(sql);
