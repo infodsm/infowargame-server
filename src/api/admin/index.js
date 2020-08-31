@@ -1,4 +1,4 @@
-import Router from 'koa-router';
+import Router from '@koa/router';
 import multer from '@koa/multer';
 
 const admin = new Router();
