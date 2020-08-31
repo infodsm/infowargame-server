@@ -15,10 +15,6 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 //로그인 api 0
 exports.login = (async (ctx,next) => {
   const id = ctx.request.body.id;
-  console.log(ctx.request.body.password);
-  console.log(typeof ctx.request.body.password);
-  console.log(process.env.secret);
-  console.log(typeof process.env.secret);
   const password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex');
   let token = ctx.request.header.token;
   let check = false;
@@ -36,8 +32,7 @@ exports.login = (async (ctx,next) => {
 
   await login();
   ctx.status = 200;
-  ctx.cookies.set('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
-  ctx.body = {check};
+  ctx.body = {check,token};
 });
 
 //회원가입 api 0
