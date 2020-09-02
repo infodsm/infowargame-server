@@ -190,7 +190,6 @@ exports.changemyinfo = (async (ctx,next) => {
         }
       }
     }
-
   };
 
   await change();

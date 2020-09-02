@@ -13,7 +13,7 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 });
 
 
-//로그인 api 0
+//유저 검색 api 0
 exports.search = (async (ctx,next) => {
   let token = ctx.request.header.token;
   let column = ctx.query.column;
