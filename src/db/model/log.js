@@ -14,7 +14,7 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     id: {//당사자 아이디
-      type: 'VARBINARY(30)',
+      type: Sequelize.STRING(30),
       allowNull: false
     },
 

@@ -13,8 +13,8 @@ module.exports = (Sequelize, sequelize) => {
       allowNull: false
     },
 
-    id: {//하결한 유저의 아이디
-      type: 'VARBINARY(30)',
+    id: {//해결한 유저의 아이디
+      type: Sequelize.STRING(30),
       allowNull: false
     },
 

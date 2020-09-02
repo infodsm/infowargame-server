@@ -9,7 +9,7 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     id: {//아이디
-      type: 'VARBINARY(30)',
+      type: Sequelize.STRING(30),
       allowNull: false
     },
 
@@ -19,7 +19,7 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     name: {//이름(닉네임)
-      type: 'VARBINARY(30)',
+      type: Sequelize.STRING(30),
       allowNull: false
     },
 

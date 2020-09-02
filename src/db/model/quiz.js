@@ -14,12 +14,12 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     makeid: {//제작자 아이디
-      type: 'VARBINARY(30)',
+      type: Sequelize.STRING(30),
       allowNull: false
     },
 
     name: {//문제 이름
-      type: 'VARBINARY(50)',
+      type: Sequelize.STRING(50),
       allowNull: false
     },
 
@@ -28,7 +28,7 @@ module.exports = (Sequelize, sequelize) => {
       allowNull: false
     },
 
-    file: {//문제 파일
+    file: {//문제 파일명
       type: Sequelize.TEXT,
       allowNull: true
     },

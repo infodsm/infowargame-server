@@ -9,12 +9,12 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     name: {//이름(닉네임)
-      type: 'VARBINARY(30)',
+      type: Sequelize.STRING(30),
       allowNull: false
     },
 
     id: {//아이디
-      type: 'VARBINARY(30)',
+      type: Sequelize.STRING(30),
       allowNull: false
     },
 
@@ -24,12 +24,12 @@ module.exports = (Sequelize, sequelize) => {
     },
 
     team: {//팀명
-      type: 'VARBINARY(30)',
+      type: Sequelize.STRING(30),
       allowNull: true
     },
 
     email: {//이메일 주소
-      type: 'VARBINARY(30)',
+      type: Sequelize.STRING(30),
       allowNull: true
     },
 
