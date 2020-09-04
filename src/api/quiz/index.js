@@ -2,7 +2,7 @@ import Router from '@koa/router';
 
 const quiz = new Router();
 
-const quizCtrl = require('./quiz.controller');
+import quizCtrl from './quiz.controller';
 
 quiz.get('/loadpage', quizCtrl.loadpage);
 quiz.get('/loadquiz', quizCtrl.loadquiz);

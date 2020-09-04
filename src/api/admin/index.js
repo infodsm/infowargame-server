@@ -3,7 +3,7 @@ import multer from '@koa/multer';
 
 const admin = new Router();
 
-const adminCtrl = require('./admin.controller');
+import adminCtrl from './admin.controller';
 const upload = multer({ dest: './files/' }); // note you can pass `multer` options here
 
 admin.post('/login', adminCtrl.login);

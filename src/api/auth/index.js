@@ -2,7 +2,7 @@ import Router from '@koa/router';
 
 const auth = new Router();
 
-const authCtrl = require('./auth.controller');
+import authCtrl from './auth.controller';
 
 auth.post('/login', authCtrl.login);
 auth.post('/signup', authCtrl.signup);

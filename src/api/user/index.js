@@ -2,7 +2,7 @@ import Router from '@koa/router';
 
 const user = new Router();
 
-const userCtrl = require('./user.controller');
+import userCtrl from './user.controller';
 
 user.get('/search', userCtrl.search);
 
