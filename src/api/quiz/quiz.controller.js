@@ -1,4 +1,5 @@
 import mariadb from 'mariadb';//mariadb 사용 모듈
+import send from 'koa-send';
 
 import jwt from './../../lib/token.js';
 import log from './../../lib/log.js';
@@ -52,22 +53,21 @@ exports.loadquiz = (async (ctx,next) => {
 //문제 파일 다운로드 api 
 exports.download = (async (ctx,next) => {
   let token = ctx.request.header.token;
-  let check = false;
+  let num = ctx.query.quiz_code;
   let sql,rows;
 
   const download = async() => {
     token = await jwt.jwtverify(token);
 
     if(token != ''){
-      sql = `SELECT * FROM user WHERE ${column} = '${srch}';`;
+      sql = `SELECT file FROM quiz WHERE num = '${num}';`;
       rows = await connection.query(sql);
-      check = true;
+      await send(ctx, `./files/${rows[0]['file']}`);
     }
   };
 
   await download();
   ctx.status = 200;
-  ctx.body = {check, rows};
 });
 
 //문제 정답 체크 api 
