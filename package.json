@@ -28,6 +28,7 @@
     "koa-body": "^4.1.1",
     "koa-helmet": "^5.2.0",
     "koa-logger": "^3.2.1",
+    "koa-send": "^5.0.1",
     "mariadb": "^2.4.2",
     "multer": "^1.4.2",
     "nodemailer": "^6.4.11",
