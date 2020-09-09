@@ -3,6 +3,7 @@ import send from 'koa-send';
 
 import jwt from './../../lib/token.js';
 import log from './../../lib/log.js';
+import rank from './../../lib/rank.js';
 import dotenv from 'dotenv';//환경변수를 코드에서 제거하기 위한 모듈
 dotenv.config();
 
@@ -76,7 +77,7 @@ exports.answer = (async (ctx,next) => {
   let num = ctx.query.quiz_code;
   let flag = ctx.request.body.flag;
   let check = false;
-  let sql,rows;
+  let sql,rows,rows1;
 
   const answer = async() => {
     token = await jwt.jwtverify(token);
@@ -84,11 +85,21 @@ exports.answer = (async (ctx,next) => {
     if(token != ''){
       sql = `SELECT quiz_id FROM flags WHERE quiz_id = ${num} AND flag = '${flag}';`;
       rows = await connection.query(sql);
+      sql = `SELECT quiz_id FROM solved WHERE quiz_id = ${num} AND id = '${token}';`;
+      rows1 = await connection.query(sql);
       await log.setlog('정답 확인',token,`${token}님께서 ${num} 문제에 답을 ${flag}로 입력하셨습니다.`);
 
-      if (rows[0] != undefined) {
+      if (rows[0] != undefined && rows1[0] == undefined) {//맞았을때
         sql = `INSERT solved(quiz_id,id) VALUES(${num}, '${token}');`;
+        await connection.query(sql);
+
+        sql = `SELECT point FROM quiz WHERE num = ${num};`;
         rows = await connection.query(sql);
+        sql = `UPDATE user SET score = score + ${rows[0]['point']} WHERE name = '${token}';`;
+        await connection.query(sql);
+
+        await rank.rank();
+
         check = true;
       }
     }
