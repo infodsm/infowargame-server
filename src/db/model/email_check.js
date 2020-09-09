@@ -23,7 +23,7 @@ module.exports = (Sequelize, sequelize) => {
       allowNull: false
     },
 
-    email_check: {//인증용 코드
+    email_check: {//이메일 확인 여부
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false
