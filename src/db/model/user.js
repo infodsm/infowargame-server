@@ -36,7 +36,12 @@ module.exports = (Sequelize, sequelize) => {
     score: {//점수
       type: Sequelize.INTEGER,
       allowNull: true
-    }
+    },
+
+    rank: {//랭크
+      type: Sequelize.INTEGER,
+      allowNull: true
+    },
 
   }, 
   {freezeTableName: true});
