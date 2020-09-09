@@ -26,6 +26,9 @@ exports.search = (async (ctx,next) => {
 
     if(token != ''){
       sql = `SELECT * FROM user WHERE ${column} = '${srch}';`;
+      console.log(column);
+      console.log(srch);
+      console.log(sql);
       rows = await connection.query(sql);
       check = true;
     }
