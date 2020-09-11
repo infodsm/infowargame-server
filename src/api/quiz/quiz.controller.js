@@ -38,12 +38,9 @@ exports.loadquiz = (async (ctx,next) => {
   let sql,rows;
 
   const loadquiz = async() => {
-
-    if(token != ''){
-      sql = `SELECT content,file FROM quiz WHERE num = ${num};`;
-      rows = await connection.query(sql);
-      check = true;
-    }
+    sql = `SELECT content,file FROM quiz WHERE num = ${num};`;
+    rows = await connection.query(sql);
+    check = true;
   };
 
   await loadquiz();
