@@ -13,4 +13,6 @@ admin.post('/quizdelete', adminCtrl.quizdelete);
 admin.post('/fileadd', upload.single('filetoadd'),adminCtrl.fileadd);
 admin.post('/filedelete', adminCtrl.filedelete);
 
+
+
 module.exports = admin;

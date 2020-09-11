@@ -52,7 +52,7 @@ exports.signup = (async (ctx,next) => {
   let sql,rows;
 
   const signup = async() => {
-    sql = `SELECT id FROM user WHERE id = '${id}';`;
+    sql = `SELECT id FROM admin WHERE id = '${id}';`;
     rows = await connection.query(sql);
 
     if(rows[0] == undefined && process.env.admincode == code){
