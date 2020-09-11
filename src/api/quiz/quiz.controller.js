@@ -40,6 +40,9 @@ exports.loadquiz = (async (ctx,next) => {
   const loadquiz = async() => {
     sql = `SELECT content,file FROM quiz WHERE num = ${num};`;
     rows = await connection.query(sql);
+    console.log(rows[0]);
+    console.log(rows[0]['file']);
+    console.log(rows[0]['contents']);
     check = true;
   };
 
