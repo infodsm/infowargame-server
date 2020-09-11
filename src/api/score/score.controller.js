@@ -13,30 +13,26 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 
 
 //50위 랭킹 불러오기 api 0
-exports.search = (async (ctx,next) => {/*
+exports.load = (async (ctx,next) => {
   let token = ctx.request.header.token;
   let check = false;
   let sql,rows,rows1;
 
-  const search = async() => {
+  const load = async() => {
     token = await jwt.jwtverify(token);
 
     if(token != ''){
-      sql = `
-      SELECT @num:=@num+1 AS num, name, score
-      FROM (SELECT @num:=0) AS n, user
-      ORFER BY(score)
-      LIMIT(50);`;
+      sql = `SELECT name, score,rank FROM user ORDER BY score LIMIT 50;`;
       rows = await connection.query(sql); 
 
-      sql = `SELECT * FROM user WHERE ${column} = '${srch}';`;
+      sql = `SELECT name, score,rank FROM user WHERE id = '${token}';`;
       rows1 = await connection.query(sql);
 
       check = true;
     }
   };
 
-  await search();
+  await load();
   ctx.status = 200;
-  ctx.body = {check, contents : rows};*/
+  ctx.body = {check, contents : rows, mydata : rows1};
 });
