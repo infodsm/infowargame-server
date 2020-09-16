@@ -56,6 +56,7 @@ exports.download = (async (ctx,next) => {
   let token = ctx.request.header.token;
   let num = ctx.query.quiz_code;
   let sql,rows;
+  let check = false;
 
   const download = async() => {
     token = await jwt.jwtverify(token);
@@ -63,11 +64,14 @@ exports.download = (async (ctx,next) => {
     if(token != ''){
       sql = `SELECT file FROM quiz WHERE num = '${num}';`;
       rows = await connection.query(sql);
+      console.log(rows[0]['file']);
       await send(ctx, `./files/${rows[0]['file']}`);
+      check = true;
     }
   };
 
   await download();
+  ctx.body = check;
   ctx.status = 200;
 });
 
