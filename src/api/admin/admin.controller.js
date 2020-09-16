@@ -37,9 +37,8 @@ exports.login = (async (ctx,next) => {
   };
 
   await login();
-  ctx.status = 200;
-  ctx.cookies.set('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
-  ctx.body = {check};
+  ctx.status = 201;
+  ctx.body = {check,token};
 });
 
 //회원가입 api 0
