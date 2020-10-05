@@ -53,72 +53,78 @@ exports.loadquiz = (async (ctx,next) => {
 
 //문제 파일 다운로드 api 
 exports.download = (async (ctx,next) => {
-  let token = ctx.request.header.token;
+  //let token = ctx.request.header.token;
   let num = ctx.query.quiz_code;
   let sql,rows;
   let check = false;
 
   const download = async() => {
-    token = await jwt.jwtverify(token);
+    //token = await jwt.jwtverify(token);
 
-    if(token != ''){
+    //if(token != ''){
       sql = `SELECT file FROM quiz WHERE num = '${num}';`;
       rows = await connection.query(sql);
       console.log(rows[0]['file']);
       await send(ctx, `./files/${rows[0]['file']}`);
       check = true;
-    }
+    //}
   };
 
-  await download();
+  await download();/*
   ctx.body = check;
-  ctx.status = 200;
+  ctx.status = 200;*/
 });
 
 //문제 정답 체크 api 
 exports.answer = (async (ctx,next) => {
-  let token = ctx.request.header.token;
-  let num = ctx.query.quiz_code;
-  let flag = ctx.request.body.flag;
-  let check = false;
-  let sql,rows,rows1;
+  const token = ctx.request.header.Authentication;
+  const { quiz_code } = ctx.params;
+  const flag = ctx.request.body.flag;
+  let sql,rows,rows1,status,body;
 
   const answer = async() => {
     token = await jwt.jwtverify(token);
 
     if(token != ''){
-      sql = `SELECT quiz_id FROM flags WHERE quiz_id = ${num} AND flag = '${flag}';`;
+      sql = `SELECT quiz_id FROM flags WHERE quiz_id = ${quiz_code} AND flag = '${flag}';`;
       rows = await connection.query(sql);
-      sql = `SELECT quiz_id FROM solved WHERE quiz_id = ${num} AND id = '${token}';`;
+      sql = `SELECT quiz_id FROM solved WHERE quiz_id = ${quiz_code} AND id = '${token}';`;
       rows1 = await connection.query(sql);
-      await log.setlog('정답 확인',token,`${token}님께서 ${num} 문제에 답을 ${flag}로 입력하셨습니다.`);
+      await log.setlog('정답 확인',token,`${token}님께서 ${quiz_code} 문제에 답을 ${flag}로 입력하셨습니다.`);
 
       if (rows[0] != undefined && rows1[0] == undefined) {//맞았을때
-        sql = `INSERT solved(quiz_id,id) VALUES(${num}, '${token}');`;
+        sql = `INSERT solved(quiz_id,id) VALUES(${quiz_code}, '${token}');`;
         await connection.query(sql);
 
-        sql = `SELECT point FROM quiz WHERE num = ${num};`;
+        sql = `SELECT point FROM quiz WHERE num = ${quiz_code};`;
         rows = await connection.query(sql);
         sql = `UPDATE user SET score = score + ${rows[0]['point']} WHERE name = '${token}';`;
         await connection.query(sql);
 
         await rank.rank();
 
-        check = true;
+        status = 201;
+        body = {"message" : "correct!!"};
+      }else{
+        status = 403;
+        body = {"message" : "wrong answer"};
       }
+    }else{
+      status = 404;
+      body = {"message" : "your token is wrong"};
     }
   };
 
   await answer();
-  ctx.status = 201;
-  ctx.body = {check};
+  ctx.status = status;
+  ctx.body = body;
 });
 
 //맞춘 문제 확인하기 api 
 exports.quiz = (async (ctx,next) => {
-  let token = ctx.request.header.token;
-  let check = false;
-  let sql,rows;
+  const { name } = ctx.params;
+  const token = ctx.request.header.Authentication;
+  let sql,rows,status,body;
 
   const quiz = async() => {
     token = await jwt.jwtverify(token);
@@ -126,11 +132,15 @@ exports.quiz = (async (ctx,next) => {
     if(token != ''){
       sql = `SELECT quiz_id FROM solved WHERE id = '${token}';`;
       rows = await connection.query(sql);
-      check = true;
+      status = 200;
+      body = {"contents" : `${rows}`};
+    }else{
+      status = 404;
+      body = {"message" : "your token is wrong"};
     }
   };
 
   await quiz();
-  ctx.status = 200;
-  ctx.body = {check, collection: rows};
+  ctx.status = status;
+  ctx.body = body;
 });
