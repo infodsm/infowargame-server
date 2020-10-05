@@ -15,7 +15,7 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 
 //내 정보 불러오기 api 0
 exports.myaccount = (async (ctx,next) => {
-  const token = ctx.request.header.Authentication;
+  const token = ctx.request.header.authentication;
   let sql,rows,status,body,check;
 
   const mypage = async() => {
@@ -40,23 +40,23 @@ exports.myaccount = (async (ctx,next) => {
   };
 
   await mypage();
-  ctx.status = 200;     
-  ctx.body = {id,nickname,email,team,score};
+  ctx.status = status;     
+  ctx.body = body;
 });
 
 //내 정보 변경 api 0
-exports.changemyinfo = (async (ctx,next) => {
-  const token = ctx.request.header.Authentication;
+exports.change = (async (ctx,next) => {
+  const token = ctx.request.header.authentication;
   const id = ctx.request.body.id;
   const password = ctx.request.body.password;
   const nickname = ctx.request.body.nickname;
   const email = ctx.request.body.email;
   const team = ctx.request.body.team;
   const change_name = ['team','password','name','email','id'];
-  const change_value = [team,password,nickname,email,id];
-  let check,i,sql,rows;
+  let change_value = [team,password,nickname,email,id];
+  let check,i,sql,rows,status,body;
 
-  if(password != false){ password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex'); }
+  if(password != false){ change_value[1] = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex'); }
 
   const change = async() => {
     check = await jwt.jwtverify(token);
@@ -69,47 +69,23 @@ exports.changemyinfo = (async (ctx,next) => {
           rows = await connection.query(sql);
         }
       }
+      status = 201;
+      body = {};
+    }else{
+      status = 404;
+      body = {"message" : "you can't change"};
     }
   };
 
   await change();
-  ctx.status = 201;
-  ctx.body = {check};
   ctx.status = status;
   ctx.body = body;
 });
 
-//유저 검색 api 0
-exports.searchuser = (async (ctx,next) => {
-  let token = ctx.request.header.Authentication;
-  let column = ctx.query.column;
-  let srch = ctx.query.srch;
-  let check = false;
-  let sql,rows;
-
-  const search = async() => {
-    token = await jwt.jwtverify(token);
-
-    if(token != ''){
-      sql = `SELECT * FROM user WHERE ${column} = '${srch}';`;
-      console.log(column);
-      console.log(srch);
-      console.log(sql);
-      rows = await connection.query(sql);
-      check = true;
-    }
-  };
-
-  await search();
-  ctx.status = 200;
-  ctx.body = {check, contents : rows};
-});
-
 //50위 랭킹 불러오기 api 0
 exports.rank = (async (ctx,next) => {
-  let token = ctx.request.header.Authentication;
-  let check = false;
-  let sql,rows,rows1;
+  let token = ctx.request.header.authentication;
+  let sql,rows,rows1,status,body;
 
   const load = async() => {
     token = await jwt.jwtverify(token);
@@ -121,11 +97,41 @@ exports.rank = (async (ctx,next) => {
       sql = `SELECT name, score,rank FROM user WHERE id = '${token}';`;
       rows1 = await connection.query(sql);
 
-      check = true;
+      status = 200;
+      body = {"contents" : rows, "mydata" : rows1};
+    }else{
+      status = 404;
+      body = {"message" : "your token is wrong"};
     }
   };
 
   await load();
-  ctx.status = 200;
-  ctx.body = {check, contents : rows, mydata : rows1};
+  ctx.status = status;
+  ctx.body = body;
+});
+
+//유저 검색 api 0
+exports.searchuser = (async (ctx,next) => {
+  let token = ctx.request.header.authentication;
+  const search = ctx.request.body.search;
+  const property = ctx.request.body.property;
+  let sql,rows,status,body;
+
+  const searchuser = async() => {
+    token = await jwt.jwtverify(token);
+
+    if(token != ''){
+      sql = `SELECT name,id,team,email,score,rank FROM user WHERE ${property} = '${search}';`;
+      rows = await connection.query(sql);
+      status = 200;
+      body = {"contents" : rows};
+    }else{
+      status = 404;
+      body = {"message" : "your token is wrong"};
+    }
+  };
+
+  await searchuser();
+  ctx.status = status;
+  ctx.body = body;
 });

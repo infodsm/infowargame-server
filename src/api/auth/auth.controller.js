@@ -11,12 +11,12 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
   password: process.env.password,
   database: process.env.database
 });
-
-//로그인 api
+ 
+//로그인 api o
 exports.login = (async (ctx,next) => {
   const id = ctx.request.body.id;
   const password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex');
-  let sql,rows,status,body;
+  let sql,rows,status,body,token;
 
   const login = async() => {
     sql = `SELECT * FROM user WHERE id = '${id}' AND password = '${password}';`;
@@ -37,7 +37,7 @@ exports.login = (async (ctx,next) => {
   ctx.body = body;
 });
 
-//회원가입 api
+//회원가입 api o
 exports.signup = (async (ctx,next) => {
   const id = ctx.request.body.id;
   const password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex');
@@ -58,6 +58,7 @@ exports.signup = (async (ctx,next) => {
       sql = `INSERT INTO user(name,id,password,team,email,score) values('${nickname}','${id}','${password}','${team}','${email}',0);`;
       await connection.query(sql);
       status = 201;
+      body = {};
     }else{
       status = 403;
       body = {"message" : "your id or password or email wrong"};
@@ -69,17 +70,20 @@ exports.signup = (async (ctx,next) => {
   ctx.body = body;
 });
 
-//아이디 중복체크 api
+//아이디 중복체크 api o
 exports.idcheck = (async (ctx,next) => {
-  const id = ctx.query.id;
-  let check = false;
+  const { id } = ctx.params;
+  console.log(id);
   let sql,rows,status,body;
 
   const idcheck = async() => {
     sql = `SELECT id FROM user WHERE id = '${id}';`;
     rows = await connection.query(sql);
 
-    if(rows[0] == undefined){ status = 200; }
+    if(rows[0] == undefined){ 
+      status = 200; 
+      body = {}; 
+    }
     else{ 
       status = 403;
       body = {"message" : "you can't use that id"};
@@ -93,9 +97,9 @@ exports.idcheck = (async (ctx,next) => {
 
 //이메일 인증 보내기 api 로직 체크 필요
 exports.emailsend = (async (ctx,next) => {
-  const id = ctx.query.id;
+  const id = ctx.request.body.id;
   const email = ctx.request.body.email;
-  const result = mail.makecode();
+  const result = await mail.makecode();
   let sql,rows,status,body;
   
   const emailsend = async() => {
