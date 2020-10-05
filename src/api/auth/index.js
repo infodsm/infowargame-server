@@ -6,7 +6,7 @@ import authCtrl from './auth.controller';
 
 auth.post('/login', authCtrl.login);
 auth.post('/signup', authCtrl.signup);
-auth.get('/idcheck', authCtrl.idcheck);
+auth.get('/idcheck/:id', authCtrl.idcheck);
 auth.post('/emailsend', authCtrl.emailsend);
 auth.get('/emailcheck', authCtrl.emailcheck);
 auth.post('/findpassword', authCtrl.findpassword);
