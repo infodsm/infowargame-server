@@ -36,6 +36,11 @@ module.exports = (Sequelize, sequelize) => {
     point: {//문제 점수
       type: Sequelize.INTEGER,
       allowNull: false
+    },
+    
+    flag: {//플래그
+      type: Sequelize.STRING(50),
+      allowNull: false
     }
 
   }, 
