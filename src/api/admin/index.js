@@ -8,10 +8,10 @@ const upload = multer({ dest: './files/' }); // note you can pass `multer` optio
 
 admin.post('/login', adminCtrl.login);
 admin.post('/signup', adminCtrl.signup);
-admin.post('/quizmake', adminCtrl.quizmake);
-admin.post('/quizdelete', adminCtrl.quizdelete);
-admin.post('/fileadd', upload.single('filetoadd'),adminCtrl.fileadd);
-admin.post('/filedelete', adminCtrl.filedelete);
+admin.post('/challenge/make', adminCtrl.challengemake);
+admin.delete('/challenge/:quiz_num', adminCtrl.challengedelete);
+admin.post('/file', upload.single('filetoadd'),adminCtrl.fileadd);
+admin.delete('/file/:quiz_num', adminCtrl.filedelete);
 
 
 
