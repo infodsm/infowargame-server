@@ -10,7 +10,7 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 exports.setlog = (async (name,id,contents) => {
   let sql,rows;
 
-  sql = `INSERT log(name,id,content) VALUES('${name}','${id}','${contents}')`;
+  sql = `INSERT log(name,id,contents) VALUES('${name}','${id}','${contents}')`;
   rows = await connection.query(sql);
 
   return;
