@@ -38,11 +38,19 @@ exports.loadquiz = (async (ctx,next) => {
   const loadquiz = async() => {
     sql = `SELECT content,file FROM quiz WHERE num = ${quiz_code};`;
     rows = await connection.query(sql);
+
+    if(rows[0] != undefined){
+      status = 200;
+      body = {content: rows[0]['content'], file: rows[0]['file']};
+    }else{
+      status = 404;
+      status = {"message" : "can't found challenge"};
+    }
   };
 
   await loadquiz();
-  ctx.status = 200;
-  ctx.body = {content: rows[0]['content'], file: rows[0]['file']};
+  ctx.status = status;
+  ctx.body = body;
 });
 
 //문제 파일 다운로드 api 
