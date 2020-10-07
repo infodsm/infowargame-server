@@ -33,7 +33,7 @@ exports.loadpage = (async (ctx,next) => {
 //문제 내용 불러오기 api 
 exports.loadquiz = (async (ctx,next) => {
   let { quiz_code } = ctx.params;
-  let sql,rows;
+  let sql,rows,status,body;
 
   const loadquiz = async() => {
     sql = `SELECT content,file FROM quiz WHERE num = ${quiz_code};`;
@@ -44,7 +44,7 @@ exports.loadquiz = (async (ctx,next) => {
       body = {content: rows[0]['content'], file: rows[0]['file']};
     }else{
       status = 404;
-      status = {"message" : "can't found challenge"};
+      body = {"message" : "can't found challenge"};
     }
   };
 
