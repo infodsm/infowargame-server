@@ -23,70 +23,61 @@ exports.loadpage = (async (ctx,next) => {
   const loadpage = async() => {
     sql = `SELECT num,category,makeid,name,point FROM quiz;`;
     rows = await connection.query(sql);
-    check = true;
   };
 
   await loadpage();
   ctx.status = 200;
-  ctx.body = {check, collection : rows};
+  ctx.body = {collection : rows};
 });
 
 //문제 내용 불러오기 api 
 exports.loadquiz = (async (ctx,next) => {
-  let num = ctx.query.quiz_code;
-  let check = false;
+  let { quiz_code } = ctx.params;
   let sql,rows;
 
   const loadquiz = async() => {
-    sql = `SELECT content,file FROM quiz WHERE num = ${num};`;
+    sql = `SELECT content,file FROM quiz WHERE num = ${quiz_code};`;
     rows = await connection.query(sql);
-    console.log(rows[0]);
-    console.log(rows[0]['file']);
-    console.log(rows[0]['contents']);
-    check = true;
   };
 
   await loadquiz();
   ctx.status = 200;
-  ctx.body = {check, contents: rows[0]['contents'], file: rows[0]['file']};
+  ctx.body = {content: rows[0]['content'], file: rows[0]['file']};
 });
 
 //문제 파일 다운로드 api 
 exports.download = (async (ctx,next) => {
-  //let token = ctx.request.header.token;
-  let num = ctx.query.quiz_code;
-  let sql,rows;
-  let check = false;
+  let { quiz_code } = ctx.params;
+  let sql,rows,body,status;
 
   const download = async() => {
-    //token = await jwt.jwtverify(token);
+    sql = `SELECT file FROM quiz WHERE num = '${quiz_code}';`;
+    rows = await connection.query(sql);
 
-    //if(token != ''){
-      sql = `SELECT file FROM quiz WHERE num = '${num}';`;
-      rows = await connection.query(sql);
-      console.log(rows[0]['file']);
+    if(rows[0] != undefined){
       await send(ctx, `./files/${rows[0]['file']}`);
-      check = true;
-    //}
+    }else{
+      ctx.body = {"message" : "can't found file"};
+      ctx.status = 404;
+    }
   };
 
-  await download();/*
-  ctx.body = check;
-  ctx.status = 200;*/
+  await download();
+
 });
 
 //문제 정답 체크 api 
 exports.answer = (async (ctx,next) => {
-  const token = ctx.request.header.Authentication;
   const { quiz_code } = ctx.params;
   const flag = ctx.request.body.flag;
+  let token = ctx.request.header.authentication;
   let sql,rows,rows1,status,body;
 
   const answer = async() => {
     token = await jwt.jwtverify(token);
 
     if(token != ''){
-      sql = `SELECT quiz_id FROM flags WHERE quiz_id = ${quiz_code} AND flag = '${flag}';`;
+      sql = `SELECT num,point FROM quiz WHERE num = ${quiz_code} AND flag = '${flag}';`;
       rows = await connection.query(sql);
       sql = `SELECT quiz_id FROM solved WHERE quiz_id = ${quiz_code} AND id = '${token}';`;
       rows1 = await connection.query(sql);
@@ -96,8 +87,6 @@ exports.answer = (async (ctx,next) => {
         sql = `INSERT solved(quiz_id,id) VALUES(${quiz_code}, '${token}');`;
         await connection.query(sql);
 
-        sql = `SELECT point FROM quiz WHERE num = ${quiz_code};`;
-        rows = await connection.query(sql);
         sql = `UPDATE user SET score = score + ${rows[0]['point']} WHERE name = '${token}';`;
         await connection.query(sql);
 
@@ -122,8 +111,7 @@ exports.answer = (async (ctx,next) => {
 
 //맞춘 문제 확인하기 api 
 exports.quiz = (async (ctx,next) => {
-  const { name } = ctx.params;
-  const token = ctx.request.header.Authentication;
+  let token = ctx.request.header.authentication;
   let sql,rows,status,body;
 
   const quiz = async() => {
@@ -133,7 +121,7 @@ exports.quiz = (async (ctx,next) => {
       sql = `SELECT quiz_id FROM solved WHERE id = '${token}';`;
       rows = await connection.query(sql);
       status = 200;
-      body = {"contents" : `${rows}`};
+      body = {"contents" : rows};
     }else{
       status = 404;
       body = {"message" : "your token is wrong"};
