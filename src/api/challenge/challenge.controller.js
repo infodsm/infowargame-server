@@ -17,17 +17,19 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 
 //문제 목록 불러오기 api 
 exports.loadpage = (async (ctx,next) => {
-  let check = false;
-  let sql,rows;
+  let sql,rows,status,body;
 
   const loadpage = async() => {
     sql = `SELECT num,category,makeid,name,point FROM quiz;`;
     rows = await connection.query(sql);
+
+    status = 200;
+    body = {collection : rows};
   };
 
   await loadpage();
-  ctx.status = 200;
-  ctx.body = {collection : rows};
+  ctx.status = status;
+  ctx.body = body;
 });
 
 //문제 내용 불러오기 api 
