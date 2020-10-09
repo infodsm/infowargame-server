@@ -19,7 +19,7 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 
 //로그인 api O
 exports.login = (async (ctx,next) => {
-  const id = ctx.request.body.id;
+  const { id } = ctx.request.body;
   const password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex');
   let sql,rows,token,status,body;
 
@@ -48,10 +48,10 @@ exports.login = (async (ctx,next) => {
 
 //회원가입 api O
 exports.signup = (async (ctx,next) => {
-  const id = ctx.request.body.id;
+  const { id } = ctx.request.body;
   const password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex');
-  const nickname = ctx.request.body.nickname;
-  const code = ctx.request.body.code;
+  const { nickname } = ctx.request.body;
+  const { code } = ctx.request.body;
   let sql,rows,status,body;
 
   const signup = async() => {
@@ -85,25 +85,25 @@ exports.challengemake =  (async (ctx,next) => {
   const { point } = ctx.request.body;
   const { quizname } = ctx.request.body;
   const { flag } = ctx.request.body;
-  let token = ctx.request.header.authentication;
+  let { authentication } = ctx.request.header;
   let sql,rows,status,body;
 
   const challengemake = async() => {
     sql = `SELECT name FROM quiz WHERE name = '${quizname}';`;
     rows = await connection.query(sql);
-    token = await jwt.jwtverify(token);
+    authentication = await jwt.jwtverify(authentication);
 
-    if(token != '' && rows[0] == undefined){
-      sql = `INSERT quiz(category,makeid,name,content,point,flag) VALUE(${category},'${token}','${quizname}','${contents}',${point},'${flag}');`;
+    if(authentication != '' && rows[0] == undefined){
+      sql = `INSERT quiz(category,makeid,name,content,point,flag) VALUE(${category},'${authentication}','${quizname}','${contents}',${point},'${flag}');`;
       await connection.query(sql);
 
-      await log.setlog(`문제 만들기`,token,`${token}님이 ${quizname}문제를 만들었습니다.`);
+      await log.setlog(`문제 만들기`,authentication,`${authentication}님이 ${quizname}문제를 만들었습니다.`);
       
       status = 201;
       body = {};
     }else{
       status = 404;
-      body = {"message" : "your token is wrong"};
+      body = {"message" : "your authentication is wrong"};
     }
   };
 
@@ -115,24 +115,24 @@ exports.challengemake =  (async (ctx,next) => {
 //문제 삭제 api O
 exports.challengedelete = (async (ctx,next) => {
   const { quiz_num } = ctx.params;
-  let token = ctx.request.header.authentication;
+  let { authentication } = ctx.request.header;
   let sql,rows,status,body;
 
   const challengedelete = async() => {
     sql = `SELECT name FROM quiz WHERE num = ${quiz_num};`;
     rows = await connection.query(sql);
-    token = await jwt.jwtverify(token);
+    authentication = await jwt.jwtverify(authentication);
 
-    if(token != '' && rows[0] != undefined){
-      sql = `DELETE FROM quiz WHERE makeid = '${token}' AND num = ${quiz_num};`;
+    if(authentication != '' && rows[0] != undefined){
+      sql = `DELETE FROM quiz WHERE makeid = '${authentication}' AND num = ${quiz_num};`;
       await connection.query(sql);
-      await log.setlog(`문제 삭제`,token,`${token}님이 ${rows[0]['name']}문제를 삭제했습니다.`);
+      await log.setlog(`문제 삭제`,authentication,`${authentication}님이 ${rows[0]['name']}문제를 삭제했습니다.`);
       
       status = 201;
       body = {};
     }else{
       status = 404;
-      body = {"message" : "your token is wrong"};
+      body = {"message" : "your authentication is wrong"};
     }
   };
 
@@ -144,24 +144,24 @@ exports.challengedelete = (async (ctx,next) => {
 //문제 파일 추가 api O
 exports.fileadd =  (async (ctx,next) => {
   const { quizname } = ctx.request.body;
-  let token = ctx.request.header.authentication;
+  let { authentication } = ctx.request.header;
   let sql,rows,status,body;
 
   const fileadd = async() => {
     sql = `SELECT name FROM quiz WHERE name = '${quizname}';`;
     rows = await connection.query(sql);
-    token = await jwt.jwtverify(token);
+    authentication = await jwt.jwtverify(authentication);
 
-    if(token != '' && rows[0] != undefined){
-      sql = `UPDATE quiz SET file = '${ctx.request.file.filename}' WHERE makeid = '${token}' AND name = '${quizname}';`;
+    if(authentication != '' && rows[0] != undefined){
+      sql = `UPDATE quiz SET file = '${ctx.request.file.filename}' WHERE makeid = '${authentication}' AND name = '${quizname}';`;
       await connection.query(sql);
-      await log.setlog(`문제 파일추가`,token,`${token}님이 ${quizname}문제에 파일을 추가했습니다.`);
+      await log.setlog(`문제 파일추가`,authentication,`${authentication}님이 ${quizname}문제에 파일을 추가했습니다.`);
       
       status = 201;
       body = {};
     }else{
       status = 404;
-      body = {"message" : "your token is wrong"};
+      body = {"message" : "your authentication is wrong"};
     }
   };
 
@@ -173,24 +173,24 @@ exports.fileadd =  (async (ctx,next) => {
 //문제 파일 삭제 api O
 exports.filedelete = (async (ctx,next) => {
   const { quiz_num } = ctx.params;
-  let token = ctx.request.header.authentication;
+  let { authentication } = ctx.request.header;
   let sql,rows,status,body;
 
   const filedelete = async() => {
     sql = `SELECT name FROM quiz WHERE num = ${quiz_num};`;
     rows = await connection.query(sql);
-    token = await jwt.jwtverify(token);
+    authentication = await jwt.jwtverify(authentication);
 
-    if(token != '' && rows[0] != undefined){
-      sql = `UPDATE quiz SET file = NULL WHERE makeid = '${token}' AND num = ${quiz_num};`;
+    if(authentication != '' && rows[0] != undefined){
+      sql = `UPDATE quiz SET file = NULL WHERE makeid = '${authentication}' AND num = ${quiz_num};`;
       rows = await connection.query(sql);
-      await log.setlog(`문제 파일삭제`,token,`${token}님이 ${quiz_num}문제의 파일을 삭제했습니다.`);
+      await log.setlog(`문제 파일삭제`,authentication,`${authentication}님이 ${quiz_num}문제의 파일을 삭제했습니다.`);
       
       status = 201;
       body = {};
     }else{
       status = 404;
-      body = {"message" : "your token is wrong"};
+      body = {"message" : "your authentication is wrong"};
     }
   };
 

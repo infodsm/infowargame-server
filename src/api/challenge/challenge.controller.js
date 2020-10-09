@@ -79,25 +79,25 @@ exports.download = (async (ctx,next) => {
 //문제 정답 체크 api 
 exports.answer = (async (ctx,next) => {
   const { quiz_code } = ctx.params;
-  const flag = ctx.request.body.flag;
-  let token = ctx.request.header.authentication;
+  const { flag } = ctx.request.body;
+  let { authentication } = ctx.request.header;
   let sql,rows,rows1,status,body;
 
   const answer = async() => {
-    token = await jwt.jwtverify(token);
+    authentication = await jwt.jwtverify(authentication);
 
-    if(token != ''){
+    if(authentication != ''){
       sql = `SELECT num,point FROM quiz WHERE num = ${quiz_code} AND flag = '${flag}';`;
       rows = await connection.query(sql);
-      sql = `SELECT quiz_id FROM solved WHERE quiz_id = ${quiz_code} AND id = '${token}';`;
+      sql = `SELECT quiz_id FROM solved WHERE quiz_id = ${quiz_code} AND id = '${authentication}';`;
       rows1 = await connection.query(sql);
-      await log.setlog('정답 확인',token,`${token}님께서 ${quiz_code} 문제에 답을 ${flag}로 입력하셨습니다.`);
+      await log.setlog('정답 확인',authentication,`${authentication}님께서 ${quiz_code} 문제에 답을 ${flag}로 입력하셨습니다.`);
 
       if (rows[0] != undefined && rows1[0] == undefined) {//맞았을때
-        sql = `INSERT solved(quiz_id,id) VALUES(${quiz_code}, '${token}');`;
+        sql = `INSERT solved(quiz_id,id) VALUES(${quiz_code}, '${authentication}');`;
         await connection.query(sql);
 
-        sql = `UPDATE user SET score = score + ${rows[0]['point']} WHERE name = '${token}';`;
+        sql = `UPDATE user SET score = score + ${rows[0]['point']} WHERE name = '${authentication}';`;
         await connection.query(sql);
 
         await rank.rank();
@@ -110,7 +110,7 @@ exports.answer = (async (ctx,next) => {
       }
     }else{
       status = 404;
-      body = {"message" : "your token is wrong"};
+      body = {"message" : "your authentication is wrong"};
     }
   };
 
@@ -121,20 +121,20 @@ exports.answer = (async (ctx,next) => {
 
 //맞춘 문제 확인하기 api 
 exports.quiz = (async (ctx,next) => {
-  let token = ctx.request.header.authentication;
+  let { authentication } = ctx.request.header;
   let sql,rows,status,body;
 
   const quiz = async() => {
-    token = await jwt.jwtverify(token);
+    authentication = await jwt.jwtverify(authentication);
 
-    if(token != ''){
-      sql = `SELECT quiz_id FROM solved WHERE id = '${token}';`;
+    if(authentication != ''){
+      sql = `SELECT quiz_id FROM solved WHERE id = '${authentication}';`;
       rows = await connection.query(sql);
       status = 200;
       body = {"contents" : rows};
     }else{
       status = 404;
-      body = {"message" : "your token is wrong"};
+      body = {"message" : "your authentication is wrong"};
     }
   };
 

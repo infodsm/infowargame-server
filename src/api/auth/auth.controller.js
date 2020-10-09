@@ -14,7 +14,7 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
  
 //로그인 api o
 exports.login = (async (ctx,next) => {
-  const id = ctx.request.body.id;
+  const { id } = ctx.request.body;
   const password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex');
   let sql,rows,status,body,token;
 
@@ -39,11 +39,11 @@ exports.login = (async (ctx,next) => {
 
 //회원가입 api o
 exports.signup = (async (ctx,next) => {
-  const id = ctx.request.body.id;
+  const { id } = ctx.request.body;
   const password = crypto.createHmac('sha256', process.env.secret).update(ctx.request.body.password).digest('hex');
-  const nickname = ctx.request.body.nickname;
-  const email = ctx.request.body.email;
-  const team = ctx.request.body.team;
+  const { nickname } = ctx.request.body;
+  const { email } = ctx.request.body;
+  const { team } = ctx.request.body;
   let sql,rows,rows1,rows2,status,body;
 
   const signup = async() => {
@@ -73,7 +73,6 @@ exports.signup = (async (ctx,next) => {
 //아이디 중복체크 api o
 exports.idcheck = (async (ctx,next) => {
   const { id } = ctx.params;
-  console.log(id);
   let sql,rows,status,body;
 
   const idcheck = async() => {
@@ -97,8 +96,8 @@ exports.idcheck = (async (ctx,next) => {
 
 //이메일 인증 보내기 api 로직 체크 필요
 exports.emailsend = (async (ctx,next) => {
-  const id = ctx.request.body.id;
-  const email = ctx.request.body.email;
+  const { id } = ctx.request.body;
+  const { email } = ctx.request.body;
   const result = await mail.makecode();
   let sql,rows,status,body;
   
@@ -124,8 +123,8 @@ exports.emailsend = (async (ctx,next) => {
 
 //이메일 인증 확인 api 0
 exports.emailcheck = (async (ctx,next) => {
-  const id = ctx.query.id;
-  const code = ctx.query.code;
+  const { id } = ctx.query;
+  const { code } = ctx.query;
   let sql,rows,status,body;
 
   const emailcheck = async() => {
@@ -150,8 +149,8 @@ exports.emailcheck = (async (ctx,next) => {
 
 //비밀번호 찾기 api 0
 exports.findpassword = (async (ctx,next) => {
-  const id = ctx.request.body.id;
-  const email = ctx.request.body.email;
+  const { id } = ctx.request.body;
+  const { email } = ctx.request.body;
   const result = Math.random().toString(36).substr(2,11);
   const new_password = crypto.createHmac('sha256', process.env.secret).update(result).digest('hex');
   let sql,rows,status,body;
