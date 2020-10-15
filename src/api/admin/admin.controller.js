@@ -25,7 +25,7 @@ exports.login = (async (ctx,next) => {
 
   const login = async() => {
     sql = `SELECT * FROM admin WHERE id = '${id}' AND password = '${password}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] != undefined){ 
       token = await jwt.jwtsign(id);
@@ -56,11 +56,11 @@ exports.signup = (async (ctx,next) => {
 
   const signup = async() => {
     sql = `SELECT id FROM admin WHERE id = '${id}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] == undefined && process.env.admincode == code){
       sql = `INSERT INTO admin(id,password,name) values('${id}','${password}','${nickname}');`;
-      await connection.query(sql);
+      await connection.query(sql,() =>{connection.release();});
       await log.setlog(`어드민 회원가입`,id,`${id}님이 가입하셨습니다.`);
       
       status = 201;
@@ -90,12 +90,12 @@ exports.challengemake =  (async (ctx,next) => {
 
   const challengemake = async() => {
     sql = `SELECT name FROM quiz WHERE name = '${quizname}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
     authentication = await jwt.jwtverify(authentication);
 
     if(authentication != '' && rows[0] == undefined){
       sql = `INSERT quiz(category,makeid,name,content,point,flag) VALUE(${category},'${authentication}','${quizname}','${contents}',${point},'${flag}');`;
-      await connection.query(sql);
+      await connection.query(sql,() =>{connection.release();});
 
       await log.setlog(`문제 만들기`,authentication,`${authentication}님이 ${quizname}문제를 만들었습니다.`);
       
@@ -120,12 +120,12 @@ exports.challengedelete = (async (ctx,next) => {
 
   const challengedelete = async() => {
     sql = `SELECT name FROM quiz WHERE num = ${quiz_num};`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
     authentication = await jwt.jwtverify(authentication);
 
     if(authentication != '' && rows[0] != undefined){
       sql = `DELETE FROM quiz WHERE makeid = '${authentication}' AND num = ${quiz_num};`;
-      await connection.query(sql);
+      await connection.query(sql,() =>{connection.release();});
       await log.setlog(`문제 삭제`,authentication,`${authentication}님이 ${rows[0]['name']}문제를 삭제했습니다.`);
       
       status = 201;
@@ -149,12 +149,12 @@ exports.fileadd =  (async (ctx,next) => {
 
   const fileadd = async() => {
     sql = `SELECT name FROM quiz WHERE name = '${quizname}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
     authentication = await jwt.jwtverify(authentication);
 
     if(authentication != '' && rows[0] != undefined){
       sql = `UPDATE quiz SET file = '${ctx.request.file.filename}' WHERE makeid = '${authentication}' AND name = '${quizname}';`;
-      await connection.query(sql);
+      await connection.query(sql,() =>{connection.release();});
       await log.setlog(`문제 파일추가`,authentication,`${authentication}님이 ${quizname}문제에 파일을 추가했습니다.`);
       
       status = 201;
@@ -178,12 +178,12 @@ exports.filedelete = (async (ctx,next) => {
 
   const filedelete = async() => {
     sql = `SELECT name FROM quiz WHERE num = ${quiz_num};`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
     authentication = await jwt.jwtverify(authentication);
 
     if(authentication != '' && rows[0] != undefined){
       sql = `UPDATE quiz SET file = NULL WHERE makeid = '${authentication}' AND num = ${quiz_num};`;
-      rows = await connection.query(sql);
+      rows = await connection.query(sql,() =>{connection.release();});
       await log.setlog(`문제 파일삭제`,authentication,`${authentication}님이 ${quiz_num}문제의 파일을 삭제했습니다.`);
       
       status = 201;

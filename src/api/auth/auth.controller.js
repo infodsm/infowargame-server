@@ -20,7 +20,7 @@ exports.login = (async (ctx,next) => {
 
   const login = async() => {
     sql = `SELECT * FROM user WHERE id = '${id}' AND password = '${password}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] != undefined){  
       token = await jwt.jwtsign(id); 
@@ -48,15 +48,15 @@ exports.signup = (async (ctx,next) => {
 
   const signup = async() => {
     sql = `SELECT id FROM user WHERE id = '${id}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
     sql = `SELECT email FROM user WHERE email = '${email}';`;
-    rows1 = await connection.query(sql);
+    rows1 = await connection.query(sql,() =>{connection.release();});
     sql = `SELECT id FROM email_check WHERE id = '${id}' AND email = '${email}' AND email_check = true;`;
-    rows2 = await connection.query(sql);
+    rows2 = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] == undefined && rows1[0] == undefined && rows2[0] != undefined){
       sql = `INSERT INTO user(name,id,password,team,email,score) values('${nickname}','${id}','${password}','${team}','${email}',0);`;
-      await connection.query(sql);
+      await connection.query(sql,() =>{connection.release();});
       status = 201;
       body = {};
     }else{
@@ -77,7 +77,7 @@ exports.idcheck = (async (ctx,next) => {
 
   const idcheck = async() => {
     sql = `SELECT id FROM user WHERE id = '${id}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] == undefined){ 
       status = 200; 
@@ -103,12 +103,12 @@ exports.emailsend = (async (ctx,next) => {
   
   const emailsend = async() => {
     sql = `SELECT id FROM email_check WHERE id = '${id}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] == undefined){ sql = `INSERT INTO email_check(id,email,code) VALUES('${id}','${email}',${result});`; }
     else{ sql = `UPDATE email_check SET code = ${result}, email = '${email}' WHERE id = '${id}';`; }
 
-    await connection.query(sql);
+    await connection.query(sql,() =>{connection.release();});
     await mail.sendmail(email,'infowargame 이메일 인증번호',`당신의 이메일 인증 코드입니다 ${result}`).then(() =>{
       status = 201;
       body = {};
@@ -129,11 +129,11 @@ exports.emailcheck = (async (ctx,next) => {
 
   const emailcheck = async() => {
     sql = `SELECT * FROM email_check WHERE id = '${id}' AND code = ${code};`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] != undefined){ 
       sql = `UPDATE email_check SET email_check = 1 WHERE id = '${id}' AND code = ${code};`;
-      rows = await connection.query(sql);
+      rows = await connection.query(sql,() =>{connection.release();});
       status = 202; 
       body = {};
     }else{
@@ -157,11 +157,11 @@ exports.findpassword = (async (ctx,next) => {
   
   const findpassword = async() => {
     sql = `SELECT id FROM user WHERE id = '${id}' AND email = '${email}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] != undefined){ 
       sql = `UPDATE user SET password = '${new_password}' WHERE id = '${id}' AND email = '${email}';`; 
-      await connection.query(sql);
+      await connection.query(sql,() =>{connection.release();});
 
       await mail.sendmail(email,'infowargame 바뀐 비밀번호',`바뀐 비밀번호 입니다 ${result}`);
       status = 200;

@@ -21,7 +21,7 @@ exports.loadpage = (async (ctx,next) => {
 
   const loadpage = async() => {
     sql = `SELECT num,category,makeid,name,point FROM quiz;`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     status = 200;
     body = {collection : rows};
@@ -39,7 +39,7 @@ exports.loadquiz = (async (ctx,next) => {
 
   const loadquiz = async() => {
     sql = `SELECT content,file FROM quiz WHERE num = ${quiz_code};`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] != undefined){
       status = 200;
@@ -62,7 +62,7 @@ exports.download = (async (ctx,next) => {
 
   const download = async() => {
     sql = `SELECT file FROM quiz WHERE num = '${quiz_code}';`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] != undefined){
       await send(ctx, `./files/${rows[0]['file']}`);
@@ -88,17 +88,17 @@ exports.answer = (async (ctx,next) => {
 
     if(authentication != ''){
       sql = `SELECT num,point FROM quiz WHERE num = ${quiz_code} AND flag = '${flag}';`;
-      rows = await connection.query(sql);
+      rows = await connection.query(sql,() =>{connection.release();});
       sql = `SELECT quiz_id FROM solved WHERE quiz_id = ${quiz_code} AND id = '${authentication}';`;
-      rows1 = await connection.query(sql);
+      rows1 = await connection.query(sql,() =>{connection.release();});
       await log.setlog('정답 확인',authentication,`${authentication}님께서 ${quiz_code} 문제에 답을 ${flag}로 입력하셨습니다.`);
 
       if (rows[0] != undefined && rows1[0] == undefined) {//맞았을때
         sql = `INSERT solved(quiz_id,id) VALUES(${quiz_code}, '${authentication}');`;
-        await connection.query(sql);
+        await connection.query(sql,() =>{connection.release();});
 
         sql = `UPDATE user SET score = score + ${rows[0]['point']} WHERE name = '${authentication}';`;
-        await connection.query(sql);
+        await connection.query(sql,() =>{connection.release();});
 
         await rank.rank();
 
@@ -129,7 +129,7 @@ exports.quiz = (async (ctx,next) => {
 
     if(authentication != ''){
       sql = `SELECT quiz_id FROM solved WHERE id = '${authentication}';`;
-      rows = await connection.query(sql);
+      rows = await connection.query(sql,() =>{connection.release();});
       status = 200;
       body = {"contents" : rows};
     }else{
