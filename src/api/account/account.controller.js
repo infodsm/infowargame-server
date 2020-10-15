@@ -22,7 +22,7 @@ exports.myaccount = (async (ctx,next) => {
     authentication = await jwt.jwtverify(authentication);
 
     sql = `SELECT id,name,email,team,score FROM user WHERE id = '${authentication}'`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
 
     if(rows[0] != undefined && authentication){
       status = 200;
@@ -66,7 +66,7 @@ exports.change = (async (ctx,next) => {
         if (change_value[i] != false) {
           console.log(`id가 ${authentication}인 사람의 ${change_name[i]}를 ${change_value[i]}로 바꿉니다.`);
           sql = `UPDATE user set ${change_name[i]} = '${change_value[i]}' WHERE id = '${authentication}';`;
-          rows = await connection.query(sql);
+          rows = await connection.query(sql,() =>{connection.release();});
         }
       }
       status = 201;
@@ -92,10 +92,10 @@ exports.rank = (async (ctx,next) => {
 
     if(authentication != ''){
       sql = `SELECT name, score,rank FROM user ORDER BY score LIMIT 50;`;
-      rows = await connection.query(sql); 
+      rows = await connection.query(sql,() =>{connection.release();});
 
       sql = `SELECT name, score,rank FROM user WHERE id = '${authentication}';`;
-      rows1 = await connection.query(sql);
+      rows1 = await connection.query(sql,() =>{connection.release();});
 
       status = 200;
       body = {"contents" : rows, "mydata" : rows1};
@@ -122,7 +122,7 @@ exports.searchuser = (async (ctx,next) => {
 
     if(authentication != ''){
       sql = `SELECT name,id,team,email,score,rank FROM user WHERE ${property} = '${search}';`;
-      rows = await connection.query(sql);
+      rows = await connection.query(sql,() =>{connection.release();});
       status = 200;
       body = {"contents" : rows};
     }else{

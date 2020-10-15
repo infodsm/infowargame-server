@@ -11,7 +11,7 @@ exports.setlog = (async (name,id,contents) => {
   let sql,rows;
 
   sql = `INSERT log(name,id,contents) VALUES('${name}','${id}','${contents}')`;
-  rows = await connection.query(sql);
+  rows = await connection.query(sql,() =>{connection.release();});
 
   return;
 });

@@ -14,10 +14,10 @@ exports.rank = (async () => {
   let sql,rows;
 
   sql = `SELECT num FROM user ORDER BY rank ASC;`;
-  rows = await connection.query(sql);
+  rows = await connection.query(sql,() =>{connection.release();});
 
   for (let i = 1; i <= rows.length; i++) {
     sql = `UPDATE user SET rank = ${i} WHERE num = ${rows[i-1]['num']};`;
-    rows = await connection.query(sql);
+    rows = await connection.query(sql,() =>{connection.release();});
   }
 });
