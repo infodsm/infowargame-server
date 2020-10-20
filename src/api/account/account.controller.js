@@ -46,13 +46,13 @@ exports.myaccount = (async (ctx,next) => {
 
 //내 정보 변경 api 0
 exports.change = (async (ctx,next) => {
-  const { authentication } = ctx.request.header;
   const { id } = ctx.request.body;
   const { password } = ctx.request.body;
   const { nickname } = ctx.request.body;
   const { email } = ctx.request.body;
   const { team } = ctx.request.body;
   const change_name = ['team','password','name','email','id'];
+  let { authentication } = ctx.request.header;
   let change_value = [team,password,nickname,email,id];
   let i,sql,rows,status,body;
 
