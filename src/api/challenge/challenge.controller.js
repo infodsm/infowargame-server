@@ -17,14 +17,32 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 
 //문제 목록 불러오기 api 
 exports.loadpage = (async (ctx,next) => {
-  let sql,rows,status,body;
+  let { authentication } = ctx.request.header;
+  let sql,rows,rows1,status,body,i;
 
   const loadpage = async() => {
-    sql = `SELECT num,category,makeid,name,point FROM quiz;`;
-    rows = await connection.query(sql,() =>{connection.release();});
+    authentication = await jwt.jwtverify(authentication);
 
-    status = 200;
-    body = {collection : rows};
+    if(authentication != ''){
+      sql = `SELECT num,category,makeid,name,point FROM quiz;`;
+      rows = await connection.query(sql,() =>{connection.release();});
+      sql = `SELECT quiz_id FROM solved WHERE id = '${authentication}';`;
+      rows1 = await connection.query(sql,() =>{connection.release();});
+
+      rows.map(current => { 
+        current.correct = 0;
+
+        for (i = 0; i < rows1.length; i++) {
+          if (current.num == rows1[i].quiz_id) { current.correct = 1; }
+        }
+      });
+
+      status = 200;
+      body = {collection : rows};
+    }else{
+      status = 404;
+      body = {"message" : "your authentication is wrong"};
+    }
   };
 
   await loadpage();
