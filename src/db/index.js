@@ -1,8 +1,8 @@
 import Sequelize from 'sequelize';
 import model from './model';
 
-require('dotenv').config()//환경변수를 코드에서 제거하기 위한 모듈
-
+import dotenv from 'dotenv';
+dotenv.config();
  
 const sequelize = new Sequelize(process.env.database , process.env.user, process.env.password, {
   host: process.env.host,
