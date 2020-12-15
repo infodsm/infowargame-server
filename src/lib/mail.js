@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: 'SendPulse',
+  service: 'Gmail',
   auth: {
     user: process.env.emailid,
     pass: process.env.emailpassword
