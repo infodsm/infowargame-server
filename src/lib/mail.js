@@ -5,7 +5,7 @@ dotenv.config();
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   host: 'smtp.gmail.com',
-  port: 587,
+  port: 465,
   secure: false,
   auth: {
     user: process.env.emailid,
@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 exports.sendmail = (async (email,mailsubject,contents) => {
 
   let info = await transporter.sendMail({
-    from: `"infowargame Team" <${process.env.emailid}>`,
+    from: `"현빈아...." <${process.env.emailid}>`,
     to: email,
 
     subject: mailsubject,
