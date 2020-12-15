@@ -3,14 +3,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
+  service: 'SendPulse',
   auth: {
     user: process.env.emailid,
-    pass: process.env.emailpassword,
-  },
+    pass: process.env.emailpassword
+  }
 });
 
 exports.sendmail = (async (email,mailsubject,contents) => {
