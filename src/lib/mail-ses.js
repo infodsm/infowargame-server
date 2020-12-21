@@ -15,7 +15,7 @@ exports.sendmail = (async (email,mailsubject,contents) => {
 
   let params = {
     Source: process.env.emailid,
-    Destination: {ToAddresses: email},
+    Destination: {ToAddresses: [email]},
     Message: {
       Body: {
         Html: {
