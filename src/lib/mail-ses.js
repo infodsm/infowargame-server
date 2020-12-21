@@ -1,24 +1,36 @@
-import ses from 'node-ses';
+import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const client = ses.createClient({key: process.env.sesKey, secret: process.env.sesSecret});
 
+const SES_CONFIG = {
+    accessKeyId: process.env.sesKey,
+    secretAccessKey: process.env.sesSecret,
+    region: 'ap-northeast-2c',
+};
+const AWS_SES = new AWS.SES(SES_CONFIG);
+
+
 exports.sendmail = (async (email,mailsubject,contents) => {
 
-  const option = {
-    to: email,
-    from: process.env.emailid,
-    subject: mailsubject,
-    message: contents,
-    altText: 'plain text'
-  }; 
-
-  client.sendEmail(option, (err, data, res) => {
-    console.log(err);
-    console.log(data);
-    console.log(res);
-  });
+  let params = {
+    Source: process.env.emailid,
+    Destination: {ToAddresses: email},
+    Message: {
+      Body: {
+        Html: {
+          Charset: 'UTF-8',
+          Data: 'This is the body of my email!',
+        },
+      },
+      Subject: {
+        Charset: 'UTF-8',
+        Data: `Hello!`,
+      }
+    }
+  };
+  return AWS_SES.sendEmail(params).promise();
 });
 
 exports.makecode = (async () => {
