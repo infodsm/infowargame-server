@@ -1,7 +1,7 @@
 import crypto from 'crypto';//암호화 모듈
 import mariadb from 'mariadb';//mariadb 사용 모듈
 import jwt from './../../lib/token.js';
-import mail from './../../lib/mail.js';
+import mail from './../../lib/mail-ses.js';
 import dotenv from 'dotenv';//환경변수를 코드에서 제거하기 위한 모듈
 dotenv.config();
 
