@@ -6,7 +6,7 @@ dotenv.config();
 const SES_CONFIG = {
     accessKeyId: process.env.sesKey,
     secretAccessKey: process.env.sesSecret,
-    region: 'ap-northeast-2c',
+    region: 'ap-northeast-2',
 };
 const AWS_SES = new AWS.SES(SES_CONFIG);
 
