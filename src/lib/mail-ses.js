@@ -2,7 +2,6 @@ import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const client = ses.createClient({key: process.env.sesKey, secret: process.env.sesSecret});
 
 const SES_CONFIG = {
     accessKeyId: process.env.sesKey,
