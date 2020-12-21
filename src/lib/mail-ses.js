@@ -19,4 +19,4 @@ exports.sendmail = (async (email,mailsubject,contents) => {
     console.log(data);
     console.log(res);
   });
-)};
+});
