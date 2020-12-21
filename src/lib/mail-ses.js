@@ -20,12 +20,12 @@ exports.sendmail = (async (email,mailsubject,contents) => {
       Body: {
         Html: {
           Charset: 'UTF-8',
-          Data: 'This is the body of my email!',
+          Data: contents,
         },
       },
       Subject: {
         Charset: 'UTF-8',
-        Data: `Hello!`,
+        Data: mailsubject,
       }
     }
   };
