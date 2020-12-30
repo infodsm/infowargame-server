@@ -12,5 +12,3 @@ sql = `INSERT user(name,id,password,team,email,score) VALUES('test1','test1','12
 connection.query(sql,() =>{connection.release();});
 sql = `INSERT admin(id,password,name) VALUES('admin1','1234','admin1');`;
 connection.query(sql,() =>{connection.release();});
-
-return;
