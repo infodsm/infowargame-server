@@ -9,7 +9,7 @@
   "scripts": {
     "start": "babel-node src/index.js",
     "start:dev": "nodemon --exec babel-node src/ src/index.js --delay 2",
-    "init": "babel-node src/db/init.js"
+    "init:db": "babel-node src/db/init.js"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
