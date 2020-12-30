@@ -11,7 +11,7 @@ const connection = mariadb.createPool({//db 연결용 변수, 내부 변수는 �
 });
 
 let sql;
-let password = crypto.createHmac('sha256', process.env.secret).update(1234).digest('hex');
+let password = crypto.createHmac('sha256', process.env.secret).update('1234').digest('hex');
 
 sql = `INSERT user(name,id,password,team,email,score) VALUES('test1','test1','${password}','test','test1@gmail.com',0);`;
 connection.query(sql,() =>{connection.release();});
